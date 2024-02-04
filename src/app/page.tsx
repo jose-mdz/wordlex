@@ -68,10 +68,12 @@ export default function Home() {
       setCurrentTry(currentTry + 1);
       setOver(true);
     } else if (dictionary.includes(w)) {
-      setCurrentTry(currentTry + 1);
-      setCurrentTryPos(0);
-    } else if (currentTry === 6) {
-      setOver(true);
+      if (currentTry === 5) {
+        setOver(true);
+      } else {
+        setCurrentTry(currentTry + 1);
+        setCurrentTryPos(0);
+      }
     } else {
       toast("Not a valid word! (" + w + ")");
     }
@@ -112,12 +114,29 @@ export default function Home() {
   const filtered = wordle.s;
 
   useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        handleChar("\n");
+      } else if (e.key === "Backspace" || e.key === "Delete") {
+        handleChar("\b");
+      } else if (e.key.length === 1) {
+        handleChar(e.key);
+      }
+    };
+
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  });
+
+  useEffect(() => {
     if (playWordSignal) {
       setPlayWordSignal(false);
       playWord();
     }
-  }, [playWord, playWordSignal]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playWordSignal]);
 
+  console.log(currentTry);
   return (
     <main className="flex flex-col h-svh">
       <div className="flex flex-col gap-2 my-2">
