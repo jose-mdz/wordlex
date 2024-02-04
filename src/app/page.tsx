@@ -5,9 +5,11 @@ import { dictionary } from "@/util/dictionary";
 
 const EMPTY = "     ";
 const pristine = () => Array.from({ length: 6 }, () => EMPTY);
+const randomWord = () =>
+  dictionary[Math.floor(Math.random() * dictionary.length)];
 
 export default function Home() {
-  const [word, setWord] = useState("apple");
+  const [word, setWord] = useState(randomWord());
   const [currentTry, setCurrentTry] = useState(0);
   const [currentTryPos, setCurrentTryPos] = useState(0);
   const [toastText, setToastText] = useState<string>("");
@@ -15,7 +17,7 @@ export default function Home() {
   const [over, setOver] = useState(false);
 
   const newGame = () => {
-    setWord(dictionary[Math.floor(Math.random() * dictionary.length)]);
+    setWord(randomWord());
     setCurrentTry(0);
     setCurrentTryPos(0);
     setTries(pristine());
