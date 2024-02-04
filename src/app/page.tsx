@@ -89,7 +89,6 @@ export default function Home() {
   let wordle = Wordle.start();
 
   for (let i = 0; i < currentTry; i++) {
-    console.log("checking ", tries[i]);
     const w = tries[i];
     w.split("").forEach((char, j) => {
       if (charIsCorrect(char, j)) {
