@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import { WordleKeyboard } from "./components/wordle-keyboard";
 import { dictionary } from "@/util/dictionary";
 
+const LIMIT = 6;
 const EMPTY = "     ";
-const pristine = () => Array.from({ length: 6 }, () => EMPTY);
+const pristine = () => Array.from({ length: LIMIT }, () => EMPTY);
 const randomWord = () =>
   dictionary[Math.floor(Math.random() * dictionary.length)];
 
@@ -68,7 +69,8 @@ export default function Home() {
       setCurrentTry(currentTry + 1);
       setOver(true);
     } else if (dictionary.includes(w)) {
-      if (currentTry === 5) {
+      if (currentTry === LIMIT - 1) {
+        setCurrentTry(currentTry + 1);
         setOver(true);
       } else {
         setCurrentTry(currentTry + 1);
