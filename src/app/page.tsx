@@ -157,7 +157,7 @@ export default function Home() {
                 <div
                   key={j}
                   className={
-                    "flex items-center justify-center border-2 border-gray-600 size-[50px] text-center uppercase text-3xl" +
+                    "flex items-center justify-center border border-gray-600 size-[50px] text-center uppercase text-3xl" +
                     (i < currentTry
                       ? charIsIncorrect(chr)
                         ? " bg-gray-800"
