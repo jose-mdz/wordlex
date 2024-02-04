@@ -107,7 +107,7 @@ export default function Home() {
   const filtered = wordle.s;
 
   return (
-    <main className="flex flex-col h-screen">
+    <main className="flex flex-col h-svh">
       <div className="flex flex-col gap-2 my-2">
         {tries.map((try_, i) => {
           return (
