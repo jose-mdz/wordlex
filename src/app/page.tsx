@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { WordleKeyboard } from "./components/wordle-keyboard";
 import { dictionary } from "@/util/dictionary";
 
@@ -15,6 +15,7 @@ export default function Home() {
   const [toastText, setToastText] = useState<string>("");
   const [tries, setTries] = useState<string[]>(pristine());
   const [over, setOver] = useState(false);
+  const [playWordSignal, setPlayWordSignal] = useState(false);
 
   const newGame = () => {
     setWord(randomWord());
@@ -29,6 +30,14 @@ export default function Home() {
     setTimeout(() => {
       setToastText("");
     }, 2000);
+  };
+
+  const setAndPlayWord = (w: string) => {
+    const newTries = [...tries];
+    newTries[currentTry] = w;
+    setTries(newTries);
+    setCurrentTryPos(5);
+    setPlayWordSignal(true);
   };
 
   const setCurrentChar = (char: string, offset = 0) => {
@@ -64,7 +73,7 @@ export default function Home() {
     } else if (currentTry === 6) {
       setOver(true);
     } else {
-      toast("Not a valid word!");
+      toast("Not a valid word! (" + w + ")");
     }
   };
 
@@ -78,7 +87,6 @@ export default function Home() {
         playWord();
       } else {
         toast("Not 5 characters yet!");
-        console.log(currentTryPos);
       }
     } else if (currentTryPos < 5) {
       setCurrentChar(char);
@@ -102,6 +110,13 @@ export default function Home() {
   }
 
   const filtered = wordle.s;
+
+  useEffect(() => {
+    if (playWordSignal) {
+      setPlayWordSignal(false);
+      playWord();
+    }
+  }, [playWord, playWordSignal]);
 
   return (
     <main className="flex flex-col h-svh">
@@ -150,6 +165,7 @@ export default function Home() {
               <div
                 key={w}
                 className=" bg-gray-800 inline-block m-3 px-3 py-1 rounded-md uppercase text-center"
+                onClick={() => setAndPlayWord(w)}
               >
                 {w}
               </div>
@@ -157,9 +173,11 @@ export default function Home() {
           </div>
         )}
       </div>
-      <div>
-        <WordleKeyboard onChar={handleChar} />
-      </div>
+      {over ? null : (
+        <div>
+          <WordleKeyboard onChar={handleChar} />
+        </div>
+      )}
       {toastText && (
         <div className="fixed flex items-center justify-center w-full">
           <span className="rounded-md bg-gray-200 text-black py-2 px-6">
