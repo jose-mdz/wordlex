@@ -138,9 +138,17 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playWordSignal]);
 
-  console.log(currentTry);
   return (
     <main className="flex flex-col h-svh">
+      <div className="p-2 px-4 border-b border-b-gray-700 text-gray-500">
+        <span
+          className=" uppercase font-bold text-white"
+          style={{ fontFamily: "'Alpha Slab One', sans" }}
+        >
+          Wordle
+        </span>
+        , but fast.
+      </div>
       <div className="flex flex-col gap-2 my-2">
         {tries.map((try_, i) => {
           return (
