@@ -66,10 +66,6 @@ export default function Home() {
     }
   };
 
-  const wordFilter = (w: string): boolean => {
-    return true;
-  };
-
   const handleChar = (char: string) => {
     if (char === "\b") {
       if (currentTryPos === 0) return;
