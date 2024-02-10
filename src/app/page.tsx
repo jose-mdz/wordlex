@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { WordleKeyboard } from "./components/wordle-keyboard";
 import { dictionary } from "@/util/dictionary";
+import { FilterIcon } from "./components/filter-icon";
+import { TagsIcon } from "./components/tags-icon";
 
 interface Placed {
 	char: string;
@@ -25,6 +27,7 @@ export default function Home() {
 	const [filterMode, setFilterMode] = useState(false);
 	const [artificialMisplaced, setArtificialMisplaced] = useState<Placed[]>([]);
 	const [artificialCorrect, setArtificialCorrect] = useState<Placed[]>([]);
+	const [tagsVisible, setTagsVisible] = useState(false);
 
 	const newGame = () => {
 		setWord(randomWord());
@@ -75,11 +78,36 @@ export default function Home() {
 		return word.includes(char) && word.charAt(pos) !== char;
 	};
 
+	const charIsMisplacedAnywhere = (char: string): boolean => {
+		for (let i = 0; i < currentTry; i++) {
+			const w = tries[i];
+			for (let j = 0; j < w.length; j++) {
+				if (word.includes(w[j]) && word.charAt(j) !== w[j] && w[j] === char) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	};
+
 	const charIsCorrect = (char: string, pos: number) => {
 		if (filterMode) {
 			return artificialCorrect.some((c) => c.char === char && c.pos === pos);
 		}
 		return word.includes(char) && word.charAt(pos) === char;
+	};
+
+	const charIsCorrectAnywhere = (char: string): boolean => {
+		for (let i = 0; i < currentTry; i++) {
+			const w = tries[i];
+			for (let i = 0; i < w.length; i++) {
+				if (w[i] === char && word[i] === char) {
+					return true;
+				}
+			}
+		}
+		return false;
 	};
 
 	const playWord = () => {
@@ -187,6 +215,13 @@ export default function Home() {
 		}
 	};
 
+	const charIsUsed = (char: string) => {
+		for (let i = 0; i < currentTry; i++) {
+			if (tries[i].includes(char)) return true;
+		}
+		return false;
+	};
+
 	useEffect(() => {
 		if (playWordSignal) {
 			setPlayWordSignal(false);
@@ -194,8 +229,6 @@ export default function Home() {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [playWordSignal]);
-
-	console.log({ artificialCorrect, artificialMisplaced });
 
 	return (
 		<main className="flex flex-col h-svh">
@@ -211,12 +244,21 @@ export default function Home() {
 				</div>
 				<button
 					type="button"
+					onClick={() => setTagsVisible(!tagsVisible)}
+					className={`${
+						tagsVisible ? "bg-green-600 text-white" : ""
+					} px-2 rounded-md mr-2`}
+				>
+					<TagsIcon />
+				</button>
+				<button
+					type="button"
 					onClick={() => setFilterMode(!filterMode)}
 					className={`${
 						filterMode ? "bg-green-600 text-white" : ""
 					} px-2 rounded-md`}
 				>
-					Filter Mode {filterMode ? "ON" : "OFF"}
+					<FilterIcon />
 				</button>
 			</div>
 
@@ -251,7 +293,7 @@ export default function Home() {
 				})}
 			</div>
 			<div className="flex-1 flex flex-col  relative">
-				{over ? (
+				{over && !filterMode ? (
 					<div className="flex flex-col m-6 gap-6">
 						<div className="text-center">Game over</div>
 						<div className="text-center uppercase">{word}</div>
@@ -264,7 +306,11 @@ export default function Home() {
 						</button>
 					</div>
 				) : (
-					<div className=" absolute inset-0 overflow-auto">
+					<div
+						className={`absolute inset-0 overflow-auto ${
+							tagsVisible ? "" : "hidden"
+						}`}
+					>
 						{filtered.slice(0, 100).map((w) => (
 							<button
 								type="button"
@@ -280,7 +326,12 @@ export default function Home() {
 			</div>
 			{over ? null : (
 				<div>
-					<WordleKeyboard onChar={handleChar} />
+					<WordleKeyboard
+						onChar={handleChar}
+						isCorrect={charIsCorrectAnywhere}
+						isMisplaced={charIsMisplacedAnywhere}
+						isUsed={charIsUsed}
+					/>
 				</div>
 			)}
 			{toastText && (
