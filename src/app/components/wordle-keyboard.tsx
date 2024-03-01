@@ -14,7 +14,7 @@ export function WordleKeyboard({
 	return (
 		<div className="m-3 flex flex-col gap-1">
 			{rows.map((row, i) => (
-				<div key={i} className="flex gap-1 justify-center">
+				<div key={i} className="flex text-[20px] gap-1 justify-center">
 					{row.split("").map((chr, i) => (
 						// biome-ignore lint/a11y/useButtonType: <explanation>
 						<button
