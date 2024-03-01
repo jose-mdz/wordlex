@@ -283,7 +283,7 @@ export default function Home() {
 													  ? " bg-green-700"
 													  : ""
 											: ""
-									}`}
+									} ${filterMode?'size-[60px]':'size-[50px]'}`}
 								>
 									{chr}
 								</div>
