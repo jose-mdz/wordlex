@@ -14,12 +14,12 @@ export function WordleKeyboard({
 	return (
 		<div className="m-3 flex flex-col gap-1">
 			{rows.map((row, i) => (
-				<div key={i} className="flex text-[20px] font-bold gap-1 justify-center">
+				<div key={i} className="flex font-bold gap-1 justify-center">
 					{row.split("").map((chr, i) => (
 						// biome-ignore lint/a11y/useButtonType: <explanation>
 						<button
 							key={i}
-							className={`text-white  min-w-[32px] bg-gray-500 px-3 py-3 rounded-md text-center ${
+							className={`text-white  min-w-[32px] h-[53px] bg-gray-500 rounded-md text-center flex justify-center items-center ${
 								isCorrect(chr)
 									? "bg-green-700"
 									: isMisplaced(chr)
@@ -27,7 +27,7 @@ export function WordleKeyboard({
 									  : isUsed(chr)
 										  ? "bg-gray-800"
 										  : ""
-							}`}
+							} ${chr === "\n" ? "text-[15px]  px-2" : "text-[20px]"}`}
 							onClick={() => onChar(chr)}
 						>
 							{chr.toUpperCase().replace("\n", "Enter").replace("\b", "⌫")}

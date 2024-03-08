@@ -4,6 +4,7 @@ import { WordleKeyboard } from "./components/wordle-keyboard";
 import { dictionary } from "@/util/dictionary";
 import { FilterIcon } from "./components/filter-icon";
 import { TagsIcon } from "./components/tags-icon";
+import { Zap } from "./components/zap-icon";
 
 interface Placed {
 	char: string;
@@ -18,6 +19,7 @@ const randomWord = () =>
 
 export default function Home() {
 	const [word, setWord] = useState(randomWord());
+	const [powerUsed, setPowerUsed] = useState(false);
 	const [currentTry, setCurrentTry] = useState(0);
 	const [currentTryPos, setCurrentTryPos] = useState(0);
 	const [toastText, setToastText] = useState<string>("");
@@ -165,61 +167,20 @@ export default function Home() {
 
 	const filtered = wordle.s;
 
-	useEffect(() => {
-		const handler = (e: KeyboardEvent) => {
-			if (e.key === "Enter") {
-				handleChar("\n");
-			} else if (e.key === "Backspace" || e.key === "Delete") {
-				handleChar("\b");
-			} else if (e.key.length === 1) {
-				handleChar(e.key);
-			}
-		};
-
-		window.addEventListener("keydown", handler);
-		return () => window.removeEventListener("keydown", handler);
-	});
-
-	const handleCharClick = (char: string, pos: number) => {
-		if (!filterMode) return;
-
-		const correctIndex = artificialCorrect.findIndex(
-			(c) => c.char === char && c.pos === pos,
-		);
-
-		// If found in correct, delete from correct
-		if (correctIndex >= 0) {
-			// delete from correct
-			setArtificialCorrect(
-				artificialCorrect.filter((p) => p.char === char && p.pos !== pos),
-			);
-		} else {
-			const misplacedIndex = artificialMisplaced.findIndex(
-				(c) => c.char === char && c.pos === pos,
-			);
-
-			// If found in misplaced, delete from misplaced and add to correct
-			if (misplacedIndex < 0) {
-				setArtificialMisplaced([...artificialMisplaced, { char, pos }]);
-			} else {
-				// add to correct
-				setArtificialCorrect([...artificialCorrect, { char, pos }]);
-
-				// remove from missplaced
-				setArtificialMisplaced(
-					artificialMisplaced.filter(
-						({ char: c, pos: i }) => c === char && i !== pos,
-					),
-				);
-			}
-		}
-	};
-
 	const charIsUsed = (char: string) => {
 		for (let i = 0; i < currentTry; i++) {
 			if (tries[i].includes(char)) return true;
 		}
 		return false;
+	};
+
+	const usePower = () => {
+		if (filtered.length > 0) {
+			const randomIndex = Math.floor(Math.random() * filtered.length);
+			const randomWord = filtered[randomIndex];
+			setAndPlayWord(randomWord);
+		}
+		setPowerUsed(true);
 	};
 
 	useEffect(() => {
@@ -242,6 +203,14 @@ export default function Home() {
 					</span>
 					, but fast.
 				</div>
+				<button
+					type="button"
+					disabled={powerUsed}
+					className={`${powerUsed ? "opacity-10" : ""} px-2 rounded-md mr-2`}
+					onClick={usePower}
+				>
+					<Zap />
+				</button>
 				<button
 					type="button"
 					onClick={() => setTagsVisible(!tagsVisible)}
@@ -283,7 +252,7 @@ export default function Home() {
 													  ? " bg-green-700"
 													  : ""
 											: ""
-									} ${filterMode?'size-[60px]':'size-[50px]'}`}
+									} ${tagsVisible ? "size-[40px]" : "size-[60px]"}`}
 								>
 									{chr}
 								</div>
