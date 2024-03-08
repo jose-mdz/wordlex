@@ -36,6 +36,7 @@ export default function Home() {
 		setCurrentTry(0);
 		setCurrentTryPos(0);
 		setTries(pristine());
+		setPowerUsed(false);
 		setOver(false);
 	};
 

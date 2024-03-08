@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { dictionary } from "../util/dictionary";
 
 const LIMIT = 6;
