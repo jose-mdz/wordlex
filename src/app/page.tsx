@@ -184,6 +184,56 @@ export default function Home() {
 	};
 
 	useEffect(() => {
+		const handler = (e: KeyboardEvent) => {
+			if (e.key === "Enter") {
+				handleChar("\n");
+			} else if (e.key === "Backspace" || e.key === "Delete") {
+				handleChar("\b");
+			} else if (e.key.length === 1) {
+				handleChar(e.key);
+			}
+		};
+
+		window.addEventListener("keydown", handler);
+		return () => window.removeEventListener("keydown", handler);
+	}, [handleChar]);
+
+	const handleCharClick = (char: string, pos: number) => {
+		if (!filterMode) return;
+
+		const correctIndex = artificialCorrect.findIndex(
+			(c) => c.char === char && c.pos === pos,
+		);
+
+		// If found in correct, delete from correct
+		if (correctIndex >= 0) {
+			// delete from correct
+			setArtificialCorrect(
+				artificialCorrect.filter((p) => p.char === char && p.pos !== pos),
+			);
+		} else {
+			const misplacedIndex = artificialMisplaced.findIndex(
+				(c) => c.char === char && c.pos === pos,
+			);
+
+			// If found in misplaced, delete from misplaced and add to correct
+			if (misplacedIndex < 0) {
+				setArtificialMisplaced([...artificialMisplaced, { char, pos }]);
+			} else {
+				// add to correct
+				setArtificialCorrect([...artificialCorrect, { char, pos }]);
+
+				// remove from missplaced
+				setArtificialMisplaced(
+					artificialMisplaced.filter(
+						({ char: c, pos: i }) => c === char && i !== pos,
+					),
+				);
+			}
+		}
+	};
+
+	useEffect(() => {
 		if (playWordSignal) {
 			setPlayWordSignal(false);
 			playWord();
