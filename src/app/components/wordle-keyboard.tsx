@@ -14,10 +14,12 @@ export function WordleKeyboard({
 	return (
 		<div className="m-3 flex flex-col gap-1">
 			{rows.map((row, i) => (
+				// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 				<div key={i} className="flex font-bold gap-1 justify-center">
 					{row.split("").map((chr, i) => (
 						// biome-ignore lint/a11y/useButtonType: <explanation>
 						<button
+							// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
 							key={i}
 							className={`text-white  min-w-[32px] h-[53px] bg-gray-500 rounded-md text-center flex justify-center items-center ${
 								isCorrect(chr)
