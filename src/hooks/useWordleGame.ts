@@ -33,8 +33,13 @@ export function useWordleGame({
 }: { game: WordleGame; toast: (msg: string) => void }) {
 	const { word } = game;
 
-	const playChar = (char: string): WordleGame => {
+	const playChar = (char: string, wordPlay?: string): WordleGame => {
 		const newGame = { ...game };
+
+		if (wordPlay) {
+			console.log("wordPlay", wordPlay);
+			newGame.tries[newGame.currentLine] = wordPlay;
+		}
 		const currentTry = newGame.tries[newGame.currentLine];
 
 		if (newGame.over) {
@@ -84,14 +89,7 @@ export function useWordleGame({
 	};
 
 	const playWord = (word: string): WordleGame => {
-		const newGame = { ...game };
-
-		if (game.tries.length < LIMIT) {
-			newGame.tries[game.tries.length] = word;
-			playChar("\n");
-		}
-
-		return newGame;
+		return playChar("\n", word);
 	};
 
 	const padWord = (word: string): string => {

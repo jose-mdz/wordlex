@@ -97,7 +97,8 @@ export default function Page() {
 		if (filtered.length > 0) {
 			const randomIndex = Math.floor(Math.random() * filtered.length);
 			const randomWord = filtered[randomIndex];
-			playWord(randomWord);
+			console.log({ randomWord });
+			setGame(playWord(randomWord));
 		}
 		setPowerUsed(true);
 	};
